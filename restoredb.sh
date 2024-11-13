@@ -1,3 +1,5 @@
 #!/bin/sh
 
-pg_restore -U ${POSTGRES_USER} -d ${POSTGRES_DB} /tmp/dvdrental.tar
+psql -U ${POSTGRES_USER} -d ${POSTGRES_DB} -f /var/lib/postgresql/create-postgres-user.sql
+
+pg_restore -U postgres -d ${POSTGRES_DB} /tmp/dvdrental.tar

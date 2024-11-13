@@ -7,9 +7,9 @@ if [ "$(id -u)" -eq 0 ]; then
 fi
 
 echo "Choose one option:"
-echo "1) Automatic Configuration"
+echo "1) Automatic Configuration (default)"
 echo "2) Manual Configuration"
-echo "[1]: "
+echo "3) Skip Configuration"
 read option
 
 POSTGRES_DB_DEFAULT=dvdrental
@@ -24,12 +24,13 @@ POSTGRES_PASSWORD=${POSTGRES_PASSWORD_DEFAULT}
 URL=${URL_DEFAULT}
 HOST_PORT=${HOST_PORT_DEFAULT}
 
-if [ "$option" -eq "2" ]; then
-    echo "Set database name [dvdrental]: "
+if [ "$option" == "2" ]; then
+    echo "Manual Configuration ..."
+    echo -n "Set database name [dvdrental]: "
     read POSTGRES_DB
     POSTGRES_DB="${POSTGRES_DB:-${POSTGRES_DB_DEFAULT}}"
 
-    echo "Set postgres user [dvdrental]: "
+    echo -n "Set postgres user [dvdrental]: "
     read POSTGRES_USER
     POSTGRES_USER="${POSTGRES_USER:-${POSTGRES_USER_DEFAULT}}"
 
@@ -37,21 +38,27 @@ if [ "$option" -eq "2" ]; then
     read -s POSTGRES_PASSWORD
     POSTGRES_PASSWORD="${POSTGRES_PASSWORD:-${POSTGRES_PASSWORD_DEFAULT}}"
 
-    echo "Set URL download [https://neon.tech/postgresqltutorial/dvdrental.zip]: "
-    read URL
-    URL="${URL:-${URL_DEFAULT}}"
-
-    echo "Set host port to run the service [5432]: "
+    echo -n "Set host port to run the service [5432]: "
     read HOST_PORT
     HOST_PORT="${HOST_PORT:-${HOST_PORT_DEFAULT}}"
+elif [ "$option" == "3" ]; then
+    echo "Skipping Configuration ..."
+    
+    sudo docker compose up --build
+    sudo docker system prune --filter label=DELETEAFTERSTOP=YES -f
+
+    exit 0
+else
+    echo "Automatic Configuration ..."
 fi
 
 echo "POSTGRES_DB=${POSTGRES_DB}" > .env
 echo "POSTGRES_USER=${POSTGRES_USER}" >> .env
 echo "POSTGRES_PASSWORD=${POSTGRES_PASSWORD}" >> .env
-echo "URL=${URL}" >> .env
+echo "URL=https://neon.tech/postgresqltutorial/dvdrental.zip" >> .env
 echo "HOST_PORT=${HOST_PORT}" >> .env
 
-sudo docker compose up
+sudo docker compose up --build
+sudo docker system prune --filter label=DELETEAFTERSTOP=YES -f
 
 exit 0
