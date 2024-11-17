@@ -44,8 +44,8 @@ if [ "$option" == "2" ]; then
 elif [ "$option" == "3" ]; then
     echo "Skipping Configuration ..."
     
+    sudo docker system prune --filter label=CLEARBEFORESTART=YES -f
     sudo docker compose up --build
-    sudo docker system prune --filter label=DELETEAFTERSTOP=YES -f
 
     exit 0
 else
@@ -58,7 +58,7 @@ echo "POSTGRES_PASSWORD=${POSTGRES_PASSWORD}" >> .env
 echo "URL=https://neon.tech/postgresqltutorial/dvdrental.zip" >> .env
 echo "HOST_PORT=${HOST_PORT}" >> .env
 
+sudo docker system prune --filter label=CLEARBEFORESTART=YES -f
 sudo docker compose up --build
-sudo docker system prune --filter label=DELETEAFTERSTOP=YES -f
 
 exit 0
