@@ -1,5 +1,6 @@
 services:
   postgres:
+    container_name: postgres-dvdrental
     build:
       context: .
       args:
@@ -10,3 +11,15 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
       - ${HOST_PORT}:5432
+    labels:
+      - CLEARBEFORESTART=TRUE
+  pgadmin4:
+    container_name: pgadmin4
+    image: dpage/pgadmin4:8.13
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
+    ports:
+      - ${PGADMIN_DEFAULT_LISTEN_PORT}:80
+    labels:
+      - CLEARBEFORESTART=TRUE
